@@ -15,7 +15,7 @@ import {
 
 import styles from './ArticleParamsForm.module.scss';
 import { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { StyleValue } from 'src/index';
+import { StyleValue } from '../app';
 
 type ArticleParamsFormProps = {
 	onSubmit: (newStyles: StyleValue) => void;
@@ -35,18 +35,18 @@ export const ArticleParamsForm = ({
 	onSubmit,
 }: ArticleParamsFormProps) => {
 	const asideRef = useRef<HTMLElement | null>(null);
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formValue, setFormValue] = useState<StyleValue>(initialState);
 	const handleClick = () => {
-		isOpen ? close() : open();
+		isMenuOpen ? close() : open();
 	};
 	const open = () => {
 		asideRef.current?.classList.add(styles.container_open);
-		setIsOpen(true);
+		setIsMenuOpen(true);
 	};
 	const close = () => {
 		asideRef.current?.classList.remove(styles.container_open);
-		setIsOpen(false);
+		setIsMenuOpen(false);
 	};
 
 	useEffect(() => {
@@ -73,14 +73,20 @@ export const ArticleParamsForm = ({
 
 	const handleReset = (event: SyntheticEvent) => {
 		event.preventDefault();
-		setFormValue(initialState);
+		setFormValue({
+			fontFamily: defaultArticleState.fontFamilyOption,
+			fontSize: defaultArticleState.fontSizeOption,
+			fontColor: defaultArticleState.fontColor,
+			containerWidth: defaultArticleState.contentWidth,
+			backgroundColor: defaultArticleState.backgroundColor,
+		});
 	};
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={handleClick} />
+			<ArrowButton isOpen={isMenuOpen} onClick={handleClick} />
 			<aside ref={asideRef} className={styles.container}>
-				<form className={styles.form}>
+				<form className={styles.form} onSubmit={handleSubmit}>
 					<div className={styles.topContainer}>
 						<Select
 							selected={formValue.fontFamily}
@@ -122,12 +128,7 @@ export const ArticleParamsForm = ({
 							type='clear'
 							onClick={handleReset}
 						/>
-						<Button
-							title='Применить'
-							htmlType='submit'
-							type='apply'
-							onClick={handleSubmit}
-						/>
+						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
 			</aside>
